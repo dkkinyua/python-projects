@@ -1,2 +1,2 @@
 # python-projects
-Small projects created by Python.
+Small projects created by Python created by dkkinyua.
