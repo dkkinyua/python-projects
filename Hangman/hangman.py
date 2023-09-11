@@ -1,82 +1,99 @@
-# The Hangman game.
-
-import random
+# Self built hangman game, added difficulty
+import random 
 from words import word_list
 
-# A function to be called to fetch the chosen word from words.py
-
-
+# A function to get the random word from wowrd_list from the words.py module
 def get_chosen_word():
-    chosen_word = random.choice(word_list)
-    return chosen_word.upper()
+    word = random.choice(word_list)
+    return word.upper()
 
-# A function to be called when the user selects the difficulty
-
-
-def play_hangman(word):
+# A function to hide the chosen word within underscores, not to reveal the real identity
+def hide_word(word):
     underscored_word = "_" * len(word)
-    guessed = False
+    return underscored_word
+
+def play_hangman():
+    print("Welcome to Python Hangman!")
     guessed_letters = []
     guessed_words = []
-    tries = 6
-    print("Welcome to Hangman! Let's play!")
-    print("Initial lives left: ", tries)
-    print(underscored_word)
-    print("\n")
-    while not guessed and tries > 0:
-        print(word)
-        guess = input("Guess a letter or a word: ").upper()
-        if len(guess) == 1 and guess.isalpha():
-            if guess in guessed_letters:
-                print(guess, "is in guessed letters.")
-                guessed_letters.append(guess)
-            elif guess not in word:
-                print(guess, "is not in word!")
-                tries = tries - 1
-                guessed_letters.append(guess)
+    is_word_complete = False
+
+    difficulty = input("Enter the difficulty you would like to play on:\nEasy(E) (Lives = 10)\nHard(H) (Lives = 7)\nor Expert(X) (Lives = 5): ").lower()
+    if difficulty == "e":
+        lives = 10
+    elif difficulty == "h":
+        lives = 7
+    elif difficulty == "x":
+        lives = 5
+
+
+
+    print(f"Initial lives: {lives}\n")
+    word = get_chosen_word()
+    underscored_word = hide_word(word)
+    print(f"Chosen word: {underscored_word}\n")
+
+    while not is_word_complete and lives > 0:
+        user_guess = input("Enter your guess, either letter or whole word: ").upper()
+
+        #This if block check if the letter is correct or not
+        if len(user_guess) == 1 and user_guess.isalpha():
+            #if if block checks if the user guess is in the guessed letters list
+            if user_guess in guessed_letters:
+                print(f"{user_guess} is in the guessed letters!")
+                guessed_letters.append(user_guess)
+            #if the guess is not in the word
+            elif user_guess not in word:
+                print(f"{user_guess} is not in word, wrong guess. Try again!")
+                lives = lives - 1
+                guessed_letters.append(user_guess)
+            #The guess is correct
             else:
-                print(f"{guess} is in word!")
-                guessed_letters.append(guess)
+                print(f"{user_guess} is in the word!\n")
+                guessed_letters.append(user_guess)
                 word_as_list = list(underscored_word)
-                indices = [i for i, letter in enumerate(
-                    word) if letter == guess]
-                for index in indices:
-                    word_as_list[index] = guess
+                indices_in_list = [i for i, letter in enumerate(word) if letter == user_guess]
+                for index in indices_in_list:
+                    word_as_list[index] = user_guess
                 underscored_word = "".join(word_as_list)
                 if "_" not in underscored_word:
-                    guessed = True
-        elif len(guess) == len(word) and guess.isalpha():
-            if guess in guessed_words:
-                print("Word has already been guessed!")
-                guessed_words.append(guess)
-            elif guess != word:
-                print(f"Word is not correct")
-                tries = tries - 1
-                guessed_words.append(guess)
+                    is_word_complete = True
+        
+        #This elif block checks if word is correct or not
+        elif len(user_guess) == len(word) and user_guess.isalpha():
+            if user_guess in guessed_words:
+                print(f"{user_guess} is in the guessed words.")
+                guessed_words.append(user_guess)
+            elif user_guess != word:
+                print(f"{user_guess} is not correct.")
+                lives = lives - 1
+                guessed_words.append(user_guess)
             else:
-                print("Word is correct!")
-                underscored_word = word
-                break
+                underscored_word = user_guess
+                is_word_complete = True       
+
+        # This executes if the user has entered a number or anything that is not in the alphabet    
         else:
-            print("Not valid, try again!")
+            print("Wrong Input, try again.")
 
-        print("Tries left: ", tries)
-        print(underscored_word)
-        print("\n")
-    if guessed:
-        print("You guessed the word correctly!")
+        print(f"Word: {underscored_word}")
+        print(f"Lives left: {lives}")
 
+    if is_word_complete == True:
+        print("Congrats, you have guessed the word corrctly!")
+        
     else:
-        print(f"The word is {word}, try better next time")
-
-
-def main_function():
-    word = get_chosen_word()
-    play_hangman(word)
-    while input("Want to play again (Y/N):") == "y":
-        word = get_chosen_word()
-        play_hangman(word)
+        print(f"The correct word is {word}, try better next time!")
 
 
 if __name__ == "__main__":
-    main_function()
+    play_hangman()
+
+
+if input("Want to try again(Y/N): ") == "y":
+    play_hangman()
+else:
+    
+    print("Okay, have a great day!")
+        
+
