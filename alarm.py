@@ -10,5 +10,4 @@ while True:
     if alarm == now:
         print("Time's up")
         break
-    else:
-        pass
+
