@@ -1,6 +1,6 @@
 import pandas as pd
 import datetime as dt
-from time import sleep
+
 
 # This is a function that adds a reservation and exports it to a CSV file
 def add_reservation(reservation_list):
