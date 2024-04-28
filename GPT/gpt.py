@@ -1,5 +1,5 @@
-import openai
-from openai import OpenAI
+import time
+from openai import OpenAI, OpenAIError
 from dotenv import load_dotenv
 import os
 
@@ -11,20 +11,39 @@ gpt = OpenAI(
 continue_prompt = True
 
 while continue_prompt:
-    user_input = input("Enter your prompt here: .  If you want to stop prompts, or close the chatbot altogether, press Y.")
+    user_input = input("Enter your prompt here. "
+                       "If you want to end this program, enter 'Y': ")
 
-    response = gpt.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "user",
-                "content": user_input
-            }
-        ]
-    )
+    try:
+        response = gpt.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "user",
+                    "content": user_input
+                }
+            ]
+        )
 
-    if user_input == "y":
-        continue_prompt = False
+        print(response.choices[0].message.content)
 
-    print(response.choices[0].message.content)
+        if user_input.lower() == "y":
+            all_prompts = input("Do you want a record of all your prompts? "
+                                "If yes, enter 'Y', if not, enter 'N' to close the program: ")
+
+            if all_prompts.lower() == "y":
+                response_dict = [{
+                    "prompt": user_input,
+                    "message": response.choices[0].message.content
+                }]
+                print(response_dict)
+
+            time.sleep(2)
+
+            print("Exiting program...")
+            continue_prompt = False
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
 
